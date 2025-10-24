@@ -23,38 +23,24 @@ export const authStore = create((set, get) => ({
   signup: async (data) => {
     try {
       const res = await axiosInstance.post("/auth/signup", data);
-      const userData = res.data.user || res.data;
-      set({ loggedUser: userData });
-      // persist token explicitly
-      if (res.data?.token) {
-        localStorage.setItem('authToken', res.data.token);
-        console.log('Stored authToken after signup (len):', res.data.token.length);
-      }
-      toast.success("Signup successful");
+      set({ loggedUser: res.data });
+      toast.success("Signup successfull");
       get().connectSocket();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Signup failed. Please try again.");
+      toast.error("Signup failed. Please try again.");
       set({ loggedUser: null });
-      localStorage.removeItem('authToken');
     }
   },
 
   login: async (data) => {
     try {
       const res = await axiosInstance.post("/auth/login", data);
-      const userData = res.data.user || res.data;
-      set({ loggedUser: userData });
-      // persist token explicitly
-      if (res.data?.token) {
-        localStorage.setItem('authToken', res.data.token);
-        console.log('Stored authToken after login (len):', res.data.token.length);
-      }
-      toast.success("Login successful");
+      set({ loggedUser: res.data });
+      toast.success("Login successfull");
       get().connectSocket();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Login failed. Please try again.");
+      toast.error("Login failed. please try again");
       set({ loggedUser: null });
-      localStorage.removeItem('authToken');
     }
   },
 
@@ -81,7 +67,7 @@ export const authStore = create((set, get) => ({
 
   connectSocket: () => {
     const { loggedUser } = get();
-    const socket = io(import.meta.env.VITE_WS_URL, {
+    const socket = io(import.meta.env.VITE_BACKEND_URL, {
       query: { userId: loggedUser._id },
       withCredentials: true,
     });
