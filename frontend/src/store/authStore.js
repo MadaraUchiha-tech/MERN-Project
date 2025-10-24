@@ -67,8 +67,9 @@ export const authStore = create((set, get) => ({
 
   connectSocket: () => {
     const { loggedUser } = get();
-    const socket = io("http://localhost:8000", {
+    const socket = io(import.meta.env.VITE_WS_URL, {
       query: { userId: loggedUser._id },
+      withCredentials: true,
     });
     socket.connect();
     set({ socket: socket });
