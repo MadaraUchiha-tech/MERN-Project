@@ -10,26 +10,30 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: "All fields are required." });
     }
     if (password.length < 6) {
-      return res.status(400).json({ message: "password atleast 6 characters" });
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
+    
     const user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ message: "user already exist." });
+      return res.status(400).json({ message: "User already exists." });
     }
+
     const hashedpassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       username,
       email,
       password: hashedpassword,
     });
+    
     await newUser.save();
-    if (newUser) {
-      tokenGeneration(newUser._id, res);
-      res.json(newUser);
-    }
+    // Generate token first
+    tokenGeneration(newUser._id, res);
+    // Then send user data
+    const userWithoutPassword = { ...newUser.toObject(), password: undefined };
+    return res.status(201).json(userWithoutPassword);
   } catch (error) {
-    console.log("error in signup", error.message);
-    res.status(500).json({ message: "internal server error" });
+    console.log("Error in signup:", error.message);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 

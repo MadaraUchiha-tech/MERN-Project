@@ -25,6 +25,11 @@ const port = process.env.PORT;
 import authRoute from "./routes/authRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 
+// Test endpoint to verify server is running
+app.get("/test", (req, res) => {
+  res.json({ message: "Server is running" });
+});
+
 app.use("/api/auth", authRoute);
 app.use("/api/message", messageRoute);
 
