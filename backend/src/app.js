@@ -16,9 +16,17 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie", "Set-Cookie", "x-access-token"],
-    exposedHeaders: ["Set-Cookie", "x-auth-token"],
+    exposedHeaders: ["Set-Cookie", "x-auth-token", "x-access-token"],
+    preflightContinue: false,
+    optionsSuccessStatus: 204
   })
 );
+
+// Handle preflight requests
+app.options('*', (req, res) => {
+  // Send response to preflight request
+  res.status(204).end();
+});
 
 const port = process.env.PORT;
 
