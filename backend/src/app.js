@@ -33,6 +33,19 @@ app.get("/test", (req, res) => {
 app.use("/api/auth", authRoute);
 app.use("/api/message", messageRoute);
 
+// Explicitly handle CORS preflight for any route (ensures custom headers are allowed)
+app.options("*", (req, res) => {
+  const origin = req.headers.origin || process.env.FRONTEND_URL || "http://localhost:5173";
+  res.header("Access-Control-Allow-Origin", origin);
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, Cookie, Set-Cookie, x-access-token"
+  );
+  res.header("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
+  res.header("Access-Control-Allow-Credentials", "true");
+  return res.sendStatus(204);
+});
+
 mongoose.connect(process.env.MONGODB_URI).then((res) => {
   console.log("mongoDB connected:" + res.connection.host);
   server.listen(port, () => {
