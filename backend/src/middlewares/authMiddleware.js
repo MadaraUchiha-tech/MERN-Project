@@ -33,6 +33,11 @@ export const checkAuth = async (req, res, next) => {
       }
     }
 
+    // Fallback to a custom header (some proxies/CDNs strip Authorization)
+    if (!token && req.headers && req.headers['x-access-token']) {
+      token = req.headers['x-access-token'];
+    }
+
     // Some clients may send cookie string like 'jwt=<token>' accidentally; strip that
     if (token && typeof token === 'string' && token.includes('jwt=')) {
       const idx = token.indexOf('jwt=');

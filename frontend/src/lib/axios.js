@@ -16,6 +16,8 @@ axiosInstance.interceptors.request.use(
     const token = localStorage.getItem('authToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      // also set custom header as fallback for servers/proxies that strip Authorization
+      config.headers['x-access-token'] = token;
     }
     return config;
   },
