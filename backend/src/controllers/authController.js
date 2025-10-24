@@ -54,17 +54,16 @@ export const login = async (req, res) => {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
-    console.log('User authenticated successfully:', email);
+    // Generate token and set cookie
     const token = tokenGeneration(user._id, res);
     
     // Send user data without password
     const userResponse = user.toObject();
     delete userResponse.password;
 
-    console.log('Login successful, sending response');
     return res.status(200).json({
       user: userResponse,
-      token: token // Include token in response for debugging
+      token: token
     });
   } catch (error) {
     console.error("Error in login:", error);

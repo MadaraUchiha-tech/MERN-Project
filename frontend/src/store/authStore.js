@@ -23,24 +23,28 @@ export const authStore = create((set, get) => ({
   signup: async (data) => {
     try {
       const res = await axiosInstance.post("/auth/signup", data);
-      set({ loggedUser: res.data });
-      toast.success("Signup successfull");
+      const userData = res.data.user || res.data;
+      set({ loggedUser: userData });
+      toast.success("Signup successful");
       get().connectSocket();
     } catch (error) {
-      toast.error("Signup failed. Please try again.");
+      toast.error(error.response?.data?.message || "Signup failed. Please try again.");
       set({ loggedUser: null });
+      localStorage.removeItem('authToken');
     }
   },
 
   login: async (data) => {
     try {
       const res = await axiosInstance.post("/auth/login", data);
-      set({ loggedUser: res.data });
-      toast.success("Login successfull");
+      const userData = res.data.user || res.data;
+      set({ loggedUser: userData });
+      toast.success("Login successful");
       get().connectSocket();
     } catch (error) {
-      toast.error("Login failed. please try again");
+      toast.error(error.response?.data?.message || "Login failed. Please try again.");
       set({ loggedUser: null });
+      localStorage.removeItem('authToken');
     }
   },
 

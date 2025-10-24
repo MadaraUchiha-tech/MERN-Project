@@ -9,49 +9,34 @@ export const axiosInstance = axios.create({
   }
 });
 
-// Request interceptor
+// Request interceptor to add token
 axiosInstance.interceptors.request.use(
   (config) => {
-    console.log('Request:', {
-      url: config.url,
-      method: config.method,
-      headers: config.headers,
-      withCredentials: config.withCredentials,
-      data: config.data
-    });
+    // Get stored token
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
   (error) => {
-    console.error('Request Error:', error);
     return Promise.reject(error);
   }
 );
 
-// Response interceptor
+// Response interceptor to handle auth response
 axiosInstance.interceptors.response.use(
   (response) => {
-    console.log('Response:', {
-      status: response.status,
-      headers: response.headers,
-      data: response.data
-    });
-    
-    // Check for auth token in header (for debugging)
-    const token = response.headers['x-auth-token'];
-    if (token) {
-      console.log('Auth token received:', token);
+    // If login/signup response contains token, store it
+    if (response.data?.token) {
+      localStorage.setItem('authToken', response.data.token);
     }
-    
     return response;
   },
   (error) => {
-    console.error('Response Error:', {
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data,
-      headers: error.response?.headers,
-      message: error.message
-    });
+    if (error.response?.status === 401) {
+      localStorage.removeItem('authToken');
+    }
     return Promise.reject(error);
   }
 );
