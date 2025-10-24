@@ -40,19 +40,38 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
+    console.log('Login attempt for:', email);
+    
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: "invalid credentials" });
+      console.log('User not found:', email);
+      return res.status(400).json({ message: "Invalid credentials" });
     }
+
     const ispassword = await bcrypt.compare(password, user.password);
     if (!ispassword) {
-      return res.status(400).json({ message: "incorrect password" });
+      console.log('Invalid password for user:', email);
+      return res.status(400).json({ message: "Incorrect password" });
     }
-    tokenGeneration(user._id, res);
-    res.status(200).json(user);
+
+    console.log('User authenticated successfully:', email);
+    const token = tokenGeneration(user._id, res);
+    
+    // Send user data without password
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    console.log('Login successful, sending response');
+    return res.status(200).json({
+      user: userResponse,
+      token: token // Include token in response for debugging
+    });
   } catch (error) {
-    console.log("error in login", error.message);
-    res.status(500).json({ message: "internal server error" });
+    console.error("Error in login:", error);
+    return res.status(500).json({ 
+      message: "Internal server error",
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 };
 
