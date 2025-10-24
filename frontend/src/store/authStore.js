@@ -25,6 +25,11 @@ export const authStore = create((set, get) => ({
       const res = await axiosInstance.post("/auth/signup", data);
       const userData = res.data.user || res.data;
       set({ loggedUser: userData });
+      // persist token explicitly
+      if (res.data?.token) {
+        localStorage.setItem('authToken', res.data.token);
+        console.log('Stored authToken after signup (len):', res.data.token.length);
+      }
       toast.success("Signup successful");
       get().connectSocket();
     } catch (error) {
@@ -39,6 +44,11 @@ export const authStore = create((set, get) => ({
       const res = await axiosInstance.post("/auth/login", data);
       const userData = res.data.user || res.data;
       set({ loggedUser: userData });
+      // persist token explicitly
+      if (res.data?.token) {
+        localStorage.setItem('authToken', res.data.token);
+        console.log('Stored authToken after login (len):', res.data.token.length);
+      }
       toast.success("Login successful");
       get().connectSocket();
     } catch (error) {

@@ -25,12 +25,12 @@ export const signup = async (req, res) => {
       password: hashedpassword,
     });
     
-    await newUser.save();
-    // Generate token first
-    tokenGeneration(newUser._id, res);
-    // Then send user data
-    const userWithoutPassword = { ...newUser.toObject(), password: undefined };
-    return res.status(201).json(userWithoutPassword);
+  await newUser.save();
+  // Generate token and set cookie
+  const token = tokenGeneration(newUser._id, res);
+  // Then send user data with token
+  const userWithoutPassword = { ...newUser.toObject(), password: undefined };
+  return res.status(201).json({ user: userWithoutPassword, token });
   } catch (error) {
     console.log("Error in signup:", error.message);
     return res.status(500).json({ message: "Internal server error" });

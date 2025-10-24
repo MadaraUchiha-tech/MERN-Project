@@ -3,6 +3,9 @@ import User from "../model/userModel.js";
 
 export const checkAuth = async (req, res, next) => {
   try {
+    // log incoming auth headers and cookies (sanitized)
+    console.log('Incoming Authorization header:', !!req.headers?.authorization);
+    console.log('Incoming cookies keys:', Object.keys(req.cookies || {}));
     // Get token from cookie or Authorization header
     let token = req?.cookies?.jwt;
 
