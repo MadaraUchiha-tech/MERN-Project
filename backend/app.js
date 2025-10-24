@@ -39,7 +39,7 @@ if(process.env.NODE_ENV === "production"){
   
   // Catch-all route for SPA - MUST be last and use '*' not regex
   app.get(/.*/, (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
   });
 }
 
