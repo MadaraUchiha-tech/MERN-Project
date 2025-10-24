@@ -48,7 +48,11 @@ axiosInstance.interceptors.request.use(
       method: config.method,
       url: config.url,
       data: config.data,
-      baseURL: config.baseURL
+      baseURL: config.baseURL,
+      headers: {
+        Authorization: config.headers?.Authorization ? 'Bearer ****' : null,
+        'Content-Type': config.headers?.['Content-Type']
+      }
     });
     return config;
   },
