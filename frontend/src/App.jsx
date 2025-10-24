@@ -37,6 +37,11 @@ function App() {
           path="/profile"
           element={loggedUser ? <ProfilePage /> : <Navigate to="/login" />}
         />
+        {/* Catch all route for 404 */}
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
       </Routes>
       <Toaster />
     </div>
