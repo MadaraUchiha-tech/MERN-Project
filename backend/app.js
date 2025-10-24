@@ -28,13 +28,18 @@ const __dirname = path.resolve();
 import authRoute from "./routes/authRoute.js";
 import messageRoute from "./routes/messageRoute.js";
 
+// API routes FIRST
 app.use("/api/auth", authRoute);
 app.use("/api/message", messageRoute);
 
+// Production setup
 if(process.env.NODE_ENV === "production"){
+  // Serve static files with correct path
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
-  app.get(/.*/, (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  
+  // Catch-all route for SPA - MUST be last and use '*' not regex
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
   });
 }
 
